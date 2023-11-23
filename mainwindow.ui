@@ -23,40 +23,51 @@
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <widget class="GLDisplayWidget" name="widget" native="true">
-      <widget class="QCheckBox" name="checkBox">
+      <widget class="QPushButton" name="pushButton">
        <property name="geometry">
         <rect>
-         <x>310</x>
-         <y>140</y>
-         <width>81</width>
-         <height>31</height>
+         <x>0</x>
+         <y>0</y>
+         <width>129</width>
+         <height>24</height>
         </rect>
        </property>
        <property name="text">
-        <string>CheckBox</string>
+        <string>Exit</string>
        </property>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QPushButton" name="addVertex">
        <property name="geometry">
         <rect>
          <x>40</x>
-         <y>110</y>
-         <width>131</width>
-         <height>81</height>
+         <y>150</y>
+         <width>75</width>
+         <height>24</height>
         </rect>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
-        <item>
-         <widget class="QPushButton" name="pushButton">
-          <property name="text">
-           <string>Exit</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_2"/>
-        </item>
-       </layout>
+       <property name="text">
+        <string>Add Vertex</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="lineEdit">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>90</y>
+         <width>113</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="lineEdit_2">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>120</y>
+         <width>113</width>
+         <height>22</height>
+        </rect>
+       </property>
       </widget>
      </widget>
     </item>

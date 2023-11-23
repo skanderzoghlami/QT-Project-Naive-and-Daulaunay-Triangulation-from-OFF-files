@@ -14,12 +14,11 @@
 class GLDisplayWidget : public QGLWidget //UpgradeQt6: public QOpenGLWidget
 {
 public:
-    explicit GLDisplayWidget(QWidget *parent = 0);
-
+    explicit GLDisplayWidget( QWidget *parent = 0);
     void initializeGL(); // The scene may be initialized in this function since the GeometricWorld is a data member...
     void paintGL(); // Display the scene Gl
     void resizeGL(int width, int height);
-
+    Mesh _mesh ;
 protected:
     // Mouse Management
     void mousePressEvent(QMouseEvent *event);
@@ -31,7 +30,6 @@ private:
     QTimer _timer; // To update the scene
     float _X, _Y ,_Z; // Translation
     float _angle; // Rotation
-
     QPoint _lastPosMouse; // To keep the last position of the mouse
 
     GeometricWorld _geomWorld; // The scene to be displayed

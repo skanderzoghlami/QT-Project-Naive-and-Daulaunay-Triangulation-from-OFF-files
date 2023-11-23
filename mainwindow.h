@@ -17,6 +17,7 @@ public:
 
 private slots:
     void on_checkBox_stateChanged(int arg1);
+    void on_addVertexButton_clicked();
 
 private:
     Ui::MainWindow *ui;

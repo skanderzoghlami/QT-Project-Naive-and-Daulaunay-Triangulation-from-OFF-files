@@ -6,15 +6,11 @@
 #endif
 
 #include "QDebug"
-
-GLDisplayWidget::GLDisplayWidget(QWidget *parent) : QGLWidget(parent), _X(0.f), _Y(0.f),_Z(0.f), _angle(0.f)
-  //UpgradeQt6: replace by : QOpenGLWidget(parent)
+GLDisplayWidget::GLDisplayWidget( QWidget *parent) : QGLWidget(parent), _X(0.f), _Y(0.f), _Z(0.f), _angle(0.f)
 {
-    // Update the scene
-    connect( &_timer, SIGNAL(timeout()), this, SLOT(updateGL())); //UpgradeQt6: connect( &_timer, SIGNAL(timeout()), this, SLOT(update()));
-    _timer.start(16); // Starts or restarts the timer with a timeout interval of 16 milliseconds.
+    connect(&_timer, SIGNAL(timeout()), this, SLOT(updateGL()));
+    _timer.start(16);
 }
-
 void GLDisplayWidget::initializeGL()
 {
     // background color
@@ -26,6 +22,18 @@ void GLDisplayWidget::initializeGL()
     glEnable(GL_COLOR_MATERIAL);
 
     //** TP : To add....
+    std::vector<Vertex> vertices = {
+        Vertex(0.0f, 1.0f, 0.0f),
+        Vertex(-1.0f, -1.0f, 0.0f),
+        Vertex(1.0f, -1.0f, 0.0f)
+    };
+
+    std::vector<Face> faces = {
+        Face(0, 1, 2) // Assuming Face is a class representing a triangle with vertex indices
+    };
+
+    // Initialize the Mesh with vertices and faces
+    _mesh = Mesh(vertices, faces);
     // Construction of the GeometricWorld before it is displayed
     // It can also be constructed following a signal (button)
 }
@@ -51,6 +59,8 @@ void GLDisplayWidget::paintGL(){
     // example with a tetraedre
     _geomWorld.drawWireFrame();
     //_geomWorld.draw();
+    glColor3f(1, 0, 0); // Set color for the mesh
+    _mesh.drawWireFrame();
 }
 
 void GLDisplayWidget::resizeGL(int width, int height){

@@ -18,6 +18,7 @@ SOURCES += main.cpp\
     mesh.cpp
 
 HEADERS  += mainwindow.h \
+    Vector3D.h \
     gldisplaywidget.h \
     mesh.h
 
