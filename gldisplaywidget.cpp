@@ -27,6 +27,11 @@ void GLDisplayWidget::initializeGL()
         Vertex(-1.0f, -1.0f, 0.0f),
         Vertex(1.0f, -1.0f, 0.0f)
     };
+//    std::vector<Vertex> vertices = {
+//        Vertex(-1296.33 , -942.784 , 0.0),
+//        Vertex(-5862.13 ,  2288.89,  0.0),
+//        Vertex(3009.41 ,  -4990.08 ,  0)
+//    };
 
     std::vector<Face> faces = {
         Face(0, 1, 2) // Assuming Face is a class representing a triangle with vertex indices
@@ -34,6 +39,8 @@ void GLDisplayWidget::initializeGL()
 
     // Initialize the Mesh with vertices and faces
     _mesh = Mesh(vertices, faces);
+    _mesh.faceMask = {0};
+    _mesh.VertexMask = {1,1,1};
     // Construction of the GeometricWorld before it is displayed
     // It can also be constructed following a signal (button)
 }
@@ -79,6 +86,13 @@ void GLDisplayWidget::mousePressEvent(QMouseEvent *event)
 {
     if( event != NULL )
         _lastPosMouse = event->pos();
+//    if (event != nullptr)
+//    {
+//        // Assuming ui->lineEditX and ui->lineEditY are your QLineEdits
+//        Vertex v=  Vertex(QString::number(event->globalX()).toFloat(),QString::number(event->globalY()).toFloat(),0);
+//        _mesh.InsertPointInMesh( v );
+//        updateGL(); //UpgradeQt6: update();
+//    }
 }
 
 // Mouse movement management

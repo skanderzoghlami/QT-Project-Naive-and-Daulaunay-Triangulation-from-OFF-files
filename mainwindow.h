@@ -14,10 +14,15 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    std::vector<float> zcoords;
 
 private slots:
-    void on_checkBox_stateChanged(int arg1);
+    void on_checkBox_stateChanged();
     void on_addVertexButton_clicked();
+    void  Daulaunize();
+    void  Flip();
+    void  Elevate();
+    void  RandomMesh();
 
 private:
     Ui::MainWindow *ui;

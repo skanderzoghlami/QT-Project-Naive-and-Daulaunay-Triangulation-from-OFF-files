@@ -26,7 +26,7 @@
       <widget class="QPushButton" name="pushButton">
        <property name="geometry">
         <rect>
-         <x>0</x>
+         <x>20</x>
          <y>0</y>
          <width>129</width>
          <height>24</height>
@@ -67,6 +67,91 @@
          <width>113</width>
          <height>22</height>
         </rect>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="Daulaunize">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>360</y>
+         <width>101</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Daulaunize</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="Flip">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>250</y>
+         <width>75</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Flip</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="summet1">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>190</y>
+         <width>113</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="Summet2">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>220</y>
+         <width>113</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButton_2">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>50</y>
+         <width>75</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Print Mesh</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="rmesh">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>330</y>
+         <width>101</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Random Mesh 2D</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="elevate">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>390</y>
+         <width>91</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Elevate</string>
        </property>
       </widget>
      </widget>

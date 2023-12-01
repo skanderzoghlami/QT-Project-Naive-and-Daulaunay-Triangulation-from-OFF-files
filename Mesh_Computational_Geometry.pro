@@ -34,4 +34,7 @@ FORMS    += mainwindow.ui
 LIBS += -lOpengl32
 LIBS += -LC:/Qt/Tools/mingw810_32/i686-w64-mingw32/lib -lGLU32
 
+DISTFILES += \
+    alpes_poisson.txt
+
 

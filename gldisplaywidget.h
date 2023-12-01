@@ -19,6 +19,7 @@ public:
     void paintGL(); // Display the scene Gl
     void resizeGL(int width, int height);
     Mesh _mesh ;
+
 protected:
     // Mouse Management
     void mousePressEvent(QMouseEvent *event);

@@ -2,7 +2,7 @@
 #define MESH_H
 
 #include <QGLWidget> //UpgradeQt6: #include <QOpenGLWidget>
-
+#include <map>
 // TO MODIFY
 class Point
 {
@@ -118,7 +118,7 @@ public:
     Mesh(const std::vector<Vertex> &vertex_init, const std::vector<Face> &faces_init);
     Mesh(){}
     void saveOFFFile(const vector<Vertex> &vertices, const vector<Face> &faces, const string &filename);
-    void readOFFFile(const string &filename, std::vector<Vertex> &vertices, std::vector<Face> &faces);
+    void readOFFFile(const string &filename, std::vector<Vertex> &vertices, std::vector<Face> &faces );
     void splitFace(int indiceFace , Vertex& new_vetex );
     void edgeFlip(int f1 , int f2);
     void edgeFlipV2(int f1, int f2);
@@ -133,8 +133,17 @@ public:
     int lawson();
     void drawWireFrame() const;
 
+
+    void addFaces(const std::vector<int>& affectedFaces, const std::vector<int>& newFaces);
+    void connectFaces(int faceIndex, int v1, int v2, std::map<std::pair<int, int>, std::pair<int, int>>& indexing_map);
+
+
     std::vector<Vertex> vertices;
     std::vector<Face> faces;
+    std::map<std::pair<int, int>, std::pair<int, int>> indexing_map;
+    vector<int> faceMask ;
+    vector<int> VertexMask ;
+
     bool isDaulaunay(Edge& a) ;
     int delaunizeV2() ;
     bool isFlippable(Edge edge);

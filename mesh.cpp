@@ -1,5 +1,5 @@
 #include "mesh.h"
-
+#include <ctime>
 GeometricWorld::GeometricWorld()
 {
     double width=0.5, depth=0.6, height=0.8;
@@ -87,7 +87,6 @@ Mesh::Mesh(const std::vector<Vertex> &vertex_init, const std::vector<Face> &face
 void Mesh::readOFFFile(const string &filename, std::vector<Vertex> &vertices, std::vector<Face> &faces)
 {
     std::ifstream file(filename);
-    std::string line;
 
     int numVertices, numFaces, numEdges;
     string holder;
@@ -96,32 +95,33 @@ void Mesh::readOFFFile(const string &filename, std::vector<Vertex> &vertices, st
     vertices.resize(numVertices);
     faces.resize(numFaces);
 
-    map<pair<int, int>, pair<int, int>> indexing_map;
 
     for (int i = 0; i < numVertices; ++i)
     {
         Vertex vertex;
         file >> vertex.x >> vertex.y >> vertex.z;
-        vertex.front_index = -1;
-        vertices[i] = vertex;
+        if(!VertexMask[i]){
+            vertex.front_index = -1;
+            vertices[i] = vertex;}
     }
 
     for (int i = 0; i < numFaces; ++i)
     {
         Face face;
-
         face.f1 = -1;
         face.f2 = -1;
         face.f3 = -1;
-
         int numVerticesInFace;
+
         file >> numVerticesInFace >> face.v1 >> face.v2 >> face.v3;
+        if (!faceMask[i])
+        {
 
         vertices[face.v1].front_index = i;
         vertices[face.v2].front_index = i;
         vertices[face.v3].front_index = i;
-
         faces[i] = face;
+        faceMask[i]=1 ;
 
         std::map<std::pair<int, int>, std::pair<int, int>>::iterator iter = indexing_map.find({face.v1, face.v2});
 
@@ -197,6 +197,7 @@ void Mesh::readOFFFile(const string &filename, std::vector<Vertex> &vertices, st
         {
             indexing_map[{face.v2, face.v3}] = {i, 1};
             indexing_map[{face.v3, face.v2}] = {i, 1};
+        }
         }
     }
     file.close();
@@ -274,6 +275,7 @@ void Mesh::splitFaceV2(int indiceFace, Vertex &new_vetex)
 {
     // Vertices Configuration
     new_vetex.front_index = indiceFace;
+    this->VertexMask.push_back(0);
     this->vertices.push_back(new_vetex);
     int new_v_place = vertices.size() - 1;
     Face &nf0 = this->faces[indiceFace];
@@ -282,19 +284,46 @@ void Mesh::splitFaceV2(int indiceFace, Vertex &new_vetex)
     Face nf2;
     nf2.v1 = nf0.v3, nf2.v2 = nf0.v1, nf2.v3 = new_v_place;
     nf0.v3 = new_v_place;
+    this->faceMask.push_back(0);
+    this->faceMask.push_back(0);
     this->faces.push_back(nf1);
     this->faces.push_back(nf2);
     // Faces configuraton
     std::cout << "Initiating File Save" << std::endl;
     saveOFFFile(vertices, faces, "temp.off");
-    std::vector<Vertex> newVertices;
-    std::vector<Face> newFaces;
+    //std::vector<Vertex> newVertices;
+    //std::vector<Face> newFaces;
     std::cout << "Finishing File Load and changing VerticeS/faces" << std::endl;
     std::cout << "------------------------------------------------" << std::endl;
-    readOFFFile("temp.off", newVertices, newFaces);
-    vertices = newVertices;
-    faces = newFaces;
+    readOFFFile("temp.off", vertices, faces);
+    //vertices = newVertices;
+    //faces = newFaces;
 }
+//void Mesh::splitFaceV2(int indiceFace, Vertex &new_vertex)
+//{
+//    // Vertices Configuration
+//    new_vertex.front_index = indiceFace;
+//    this->vertices.push_back(new_vertex);
+//    int new_v_place = vertices.size() - 1;
+
+//    Face &nf0 = this->faces[indiceFace];
+
+//    // Create new face nf1
+//    this->faces.push_back(Face{nf0.v2, nf0.v3, new_v_place});
+//    Face *nf1 = &this->faces.back();
+
+//    // Create new face nf2
+//    this->faces.push_back(Face{nf0.v3, nf0.v1, new_v_place});
+//    Face *nf2 = &this->faces.back();
+
+//    this->faces[indiceFace].v3 = new_v_place;
+
+//    // Connect the new faces with existing faces using addFaces
+//    std::vector<int> affectedFaces = {indiceFace};  // The face being split
+//    std::vector<Face *> newFaces = {nf1, nf2};  // The new faces as pointers
+//    addFaces(affectedFaces, newFaces);
+//}
+
 // The Long Not fully Tested way
 void Mesh::edgeFlip(int f1, int f2)
 {
@@ -437,7 +466,9 @@ void Mesh::edgeFlipV2(int f1, int f2)
 {
 
     Face &t1 = this->faces[f1];
+    faceMask[f1]=1 ;
     Face &t2 = this->faces[f2];
+    faceMask[f2]=1 ;
 
     // Find the shared vertices between the two faces.
     int sharedV1 = -1, sharedV2 = -1, faceV11 = -1, faceV12 = -1, faceV21 = -1, faceV22 = -1;
@@ -546,13 +577,13 @@ void Mesh::edgeFlipV2(int f1, int f2)
     }
     std::cout << "Initiating File Save" << std::endl;
     saveOFFFile(vertices, faces, "temp.off");
-    std::vector<Vertex> newVertices;
-    std::vector<Face> newFaces;
+//    std::vector<Vertex> newVertices;
+//    std::vector<Face> newFaces;
     std::cout << "Finishing File Load and changing VerticeS/faces" << std::endl;
     std::cout << "------------------------------------------------" << std::endl;
-    readOFFFile("temp.off", newVertices, newFaces);
-    vertices = newVertices;
-    faces = newFaces;
+    readOFFFile("temp.off", vertices, faces);
+//    vertices = newVertices;
+//    faces = newFaces;
 }
 // z < 0 => -1 ./.  z > 0 => 1   ./. z==0 => 0                                                                 : 0;
 float Mesh::test_orientation(Vertex v1, Vertex v2, Vertex v3)
@@ -601,22 +632,22 @@ void Mesh::InsertPointInMesh(Vertex &A)
         if (pointInTriangle(face, A) == 1)
         {
             isInside = 1;
+
             splitFaceV2(i, A);
             std::cout << "Found The Point inside Face: " << i << std::endl;
         }
         if (face.f1 == -1)
         {
-            vectorOfVertices.push_back({face.v2, face.v3});
+            vectorOfVertices.push_back({face.v2, face.v3,i});
         }
         if (face.f2 == -1)
         {
-            vectorOfVertices.push_back({face.v3, face.v1});
+            vectorOfVertices.push_back({face.v3, face.v1,i});
         }
         if (face.f3 == -1)
         {
-            vectorOfVertices.push_back({face.v1, face.v2});
+            vectorOfVertices.push_back({face.v1, face.v2,i});
         }
-
         i++;
     }
 
@@ -630,6 +661,7 @@ void Mesh::InsertPointInMesh(Vertex &A)
     std::cout << "Point is outside Convex hull" << std::endl;
     // Outside
     vertices.push_back(A);
+    VertexMask.push_back(0);
     for (const std::vector<int> &verticesPair : vectorOfVertices)
     {
         if (test_orientation(vertices[verticesPair[0]], vertices[verticesPair[1]], A) < 0)
@@ -642,19 +674,21 @@ void Mesh::InsertPointInMesh(Vertex &A)
             {
                 std::swap(newFace.v2, newFace.v3);
             }
+            faceMask.push_back(0);
             faces.push_back(newFace);
+            faceMask[verticesPair[2]] = 0 ;
             std::cout << "Found a visible edge" << newFace.v1 << newFace.v2 << std::endl;
         }
     }
+    // addFaces(affectedFaces, newFaces);
+    std::cout << "Finished Adding outside the convex hull" << std::endl;
     std::cout << "Initiating File Save" << std::endl;
     saveOFFFile(vertices, faces, "temp.off");
-    std::vector<Vertex> newVertices;
-    std::vector<Face> newFaces;
+//    std::vector<Vertex> newVertices;
+//    std::vector<Face> newFaces;
     std::cout << "Finishing File Load and changing VerticeS/faces" << std::endl;
     std::cout << "------------------------------------------------" << std::endl;
-    readOFFFile("temp.off", newVertices, newFaces);
-    vertices = newVertices;
-    faces = newFaces;
+    readOFFFile("temp.off", vertices, faces);
 }
 
 // ----------------------- Partie Daulaunay -------------------------------------
@@ -734,9 +768,7 @@ bool Mesh::isDaulaunay(Edge& a){
     for (int i = 0; i < faces.size(); ++i)
     {
 
-
-        if (i%1000 == 0)
-            std::cout<<"Still Looking we at Face: "<<i<<std::endl;
+        std::cout<<"Still Looking we at Face: "<<i<<std::endl;
         Face &currentFace = faces[i];
         currentFace.fillTables();
         for (int j = 0; j < 3; ++j)
@@ -754,7 +786,7 @@ bool Mesh::isDaulaunay(Edge& a){
                 neighborFace.fillTables();
                 for (int k = 0; k < 3; ++k)
                 {
-                    if (neighborFace.v1v2v3[k] != vertexA && neighborFace.v1v2v3[k] != vertexB)
+                    if (neighborFace.v1v2v3[k] != vertexA && neighborFace.v1v2v3[k] != vertexB && neighborFace.v1v2v3[k] != vertexC)
                     {
                         vertexD = neighborFace.v1v2v3[k];
                         break;
@@ -770,14 +802,15 @@ bool Mesh::isDaulaunay(Edge& a){
             edge.D = vertexD;
             edge.f1 = i;
             edge.f2 = neighborFaceIndex;
-            if (edge.f1 != -1 && edge.f2 != -1)
+            if (edge.f1 != -1 && edge.f2 != -1 && edge.A!=-1 && edge.B!=-1 && edge.C!=-1 && edge.D!=-1  )
             {
                 if(!isLocallyDaulaunay(edge) ){
                     // if the edge is flippable we return it otherwise de do nothing
-                    if(isFlippable(edge)){
+                    std::cout<<"Edge is not locally daulaunay "<<isLocallyDaulaunay(edge)<<std::endl;
+                    //if(isFlippable(edge)){
                         a = edge;
                         return false;
-                    }
+                    //}
                 }
             }
         }
@@ -832,11 +865,13 @@ void Mesh::edgeFlipv3( int fId1,  int fId2)
 int Mesh::lawson() {
     Edge a;
     int cnt = 0;
+    std::cout<<"Started Lawson"<<std::endl;
     while(!isDaulaunay(a)){
         std::cout<<"Flipping Edge: "<<a.A<<" "<<a.B<<" "<<a.C<<" "<<a.D<<" "<<a.f1<<" "<<a.f2<<std::endl;
-        edgeFlipv3(a.f1, a.f2);
+        edgeFlipV2(a.f1, a.f2);
         cnt+=1 ;
     }
+    std::cout<<"Finished Lawson after nm_iterations="<<cnt<<std::endl;
     return cnt;
 }
 
@@ -878,11 +913,16 @@ int Mesh::delaunizeV2() {
 void Mesh::drawWireFrame() const
 {
     glBegin(GL_TRIANGLES);
-
+    //srand(static_cast<unsigned>(time(nullptr)));
+    srand(42);
     for ( Face face : faces)
     {
-        // Draw each vertex of the face
         face.fillTables();
+        // Generate random color for each face
+        float r = static_cast<float>(rand()) / RAND_MAX;
+        float g = static_cast<float>(rand()) / RAND_MAX;
+        float b = static_cast<float>(rand()) / RAND_MAX;
+        glColor3f(r, g, b);
         for (const int vertexIndex : face.v1v2v3)
         {
             const Vertex& vertex = vertices[vertexIndex];
@@ -892,3 +932,5 @@ void Mesh::drawWireFrame() const
 
     glEnd();
 }
+
+
