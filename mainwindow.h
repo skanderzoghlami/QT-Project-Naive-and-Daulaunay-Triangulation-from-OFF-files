@@ -23,6 +23,7 @@ private slots:
     void  Flip();
     void  Elevate();
     void  RandomMesh();
+    void  Save();
 
 private:
     Ui::MainWindow *ui;

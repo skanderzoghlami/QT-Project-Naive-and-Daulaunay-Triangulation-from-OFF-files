@@ -123,7 +123,7 @@ public:
     void edgeFlip(int f1 , int f2);
     void edgeFlipV2(int f1, int f2);
     void edgeFlipv3( int fId1,  int fId2);
-    float test_orientation(Vertex v1 , Vertex v2 , Vertex v3) ;
+    int test_orientation(Vertex v1 , Vertex v2 , Vertex v3) ;
     int pointInTriangle(Face &f, Vertex &P);
     void InsertPointInMesh(Vertex& A ) ;
     void splitFaceV2(int indiceFace, Vertex &new_vetex);

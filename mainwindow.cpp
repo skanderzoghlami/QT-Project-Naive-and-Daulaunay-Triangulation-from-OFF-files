@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(on_checkBox_stateChanged()));
     connect(ui->rmesh, SIGNAL(clicked()), this, SLOT(RandomMesh()));
     connect(ui->elevate, SIGNAL(clicked()), this, SLOT(Elevate()));
+    connect(ui->Save, SIGNAL(clicked()), this, SLOT(Save()));
 }
 
 MainWindow::~MainWindow()
@@ -54,12 +55,15 @@ void  MainWindow::Daulaunize(){
     glWidget->_mesh.lawson();
     ui->widget->updateGL();  // UpgradeQt6: ui->widget->update();
 }
+void  MainWindow::Save(){
+    GLDisplayWidget* glWidget = ui->widget;
+    glWidget->_mesh.saveOFFFile(glWidget->_mesh.vertices ,glWidget->_mesh.faces , "Output.off" );
+}
 
 void  MainWindow::Flip(){
     GLDisplayWidget* glWidget = ui->widget;
     double x = ui->summet1->text().toInt();
     double y = ui->Summet2->text().toInt();
-
     glWidget->_mesh.edgeFlip(x, y);
     ui->widget->updateGL();  // UpgradeQt6: ui->widget->update();
 }
@@ -111,65 +115,66 @@ void MainWindow::Elevate()
     glWidget->updateGL();
 }
 
-//void  MainWindow::RandomMesh(){
-//    GLDisplayWidget* glWidget = ui->widget;
-//    // Seed the random number generator
-//    std::srand(std::time(0));
-
-//    // Generate 10 random vertices and insert them into the mesh
-//    for (int i = 0; i < 10; ++i)
-//    {
-//        // Generate random x and y coordinates (adjust the range as needed)
-//        float x = static_cast<float>(std::rand() % 100) / 10.0f;
-//        float y = static_cast<float>(std::rand() % 100) / 10.0f;
-
-//        // Create a vertex with the random coordinates
-//        Vertex newVertex(x, y, 0.0f);
-
-//        // Insert the vertex into the mesh
-//        glWidget->_mesh.InsertPointInMesh(newVertex);
-
-//        // Optionally, you can call updateGL() here to redraw the scene
-//        ui->widget->updateGL();
-//    }
-//}
-
 void  MainWindow::RandomMesh(){
-{
-    //QString currentPath = QCoreApplication::applicationDirPath(); // Get the current working directory
-
     GLDisplayWidget* glWidget = ui->widget;
-    // Open the file
-    QString filePath = "alpes_poisson.txt";
-    std::ifstream file(filePath.toStdString());
+    // Seed the random number generator
+    std::srand(std::time(0));
 
-    if (!file.is_open())
+    // Generate 10 random vertices and insert them into the mesh
+    for (int i = 0; i < 10; ++i)
     {
-        qDebug() << "Error: Unable to open file" << filePath;
-        return;
-    }
+        // Generate random x and y coordinates (adjust the range as needed)
+        float x = static_cast<float>(std::rand() % 100) / 10.0f;
+        float y = static_cast<float>(std::rand() % 100) / 10.0f;
 
-    // Read the number of vertices
-    int numVertices;
-    file >> numVertices;
-
-    // Read vertex coordinates and insert them into the mesh
-    zcoords.clear();
-    for (int i = 0; i < numVertices; ++i)
-    {
-        float x, y, z;
-        file >> x >> y >> z;
-        zcoords.push_back(z);
-        // Create a vertex with the coordinates
-        Vertex newVertex(x, y, 0);
+        // Create a vertex with the random coordinates
+        Vertex newVertex(x, y, 0.0f);
 
         // Insert the vertex into the mesh
         glWidget->_mesh.InsertPointInMesh(newVertex);
-    }
 
-    // Close the file
-    file.close();
-    // Optionally, you can call updateGL() here to redraw the scene
-    glWidget->updateGL();
+        // Optionally, you can call updateGL() here to redraw the scene
+        ui->widget->updateGL();
+    }
 }
-}
+
+//void  MainWindow::RandomMesh(){
+//{
+//    //QString currentPath = QCoreApplication::applicationDirPath(); // Get the current working directory
+
+//    GLDisplayWidget* glWidget = ui->widget;
+//    // Open the file
+//    QString filePath = "alpes_poisson.txt";
+//    std::ifstream file(filePath.toStdString());
+
+//    if (!file.is_open())
+//    {
+//        qDebug() << "Error: Unable to open file" << filePath;
+//        return;
+//    }
+
+//    // Read the number of vertices
+//    int numVertices;
+//    file >> numVertices;
+
+//    // Read vertex coordinates and insert them into the mesh
+//    zcoords.clear();
+//    zcoords={1647.61 ,1096.62 , 1633};
+//    for (int i = 0; i < numVertices; ++i)
+//    {
+//        float x, y, z;
+//        file >> x >> y >> z;
+//        zcoords.push_back(z);
+//        // Create a vertex with the coordinates
+//        Vertex newVertex(x, y, 0);
+
+//        // Insert the vertex into the mesh
+//        glWidget->_mesh.InsertPointInMesh(newVertex);
+//    }
+
+//    // Close the file
+//    file.close();
+//    // Optionally, you can call updateGL() here to redraw the scene
+//    glWidget->updateGL();
+//}
+//}

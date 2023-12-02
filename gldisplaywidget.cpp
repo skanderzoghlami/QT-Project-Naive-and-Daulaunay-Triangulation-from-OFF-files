@@ -41,8 +41,7 @@ void GLDisplayWidget::initializeGL()
     _mesh = Mesh(vertices, faces);
     _mesh.faceMask = {0};
     _mesh.VertexMask = {1,1,1};
-    // Construction of the GeometricWorld before it is displayed
-    // It can also be constructed following a signal (button)
+
 }
 
 void GLDisplayWidget::paintGL(){
@@ -86,13 +85,6 @@ void GLDisplayWidget::mousePressEvent(QMouseEvent *event)
 {
     if( event != NULL )
         _lastPosMouse = event->pos();
-//    if (event != nullptr)
-//    {
-//        // Assuming ui->lineEditX and ui->lineEditY are your QLineEdits
-//        Vertex v=  Vertex(QString::number(event->globalX()).toFloat(),QString::number(event->globalY()).toFloat(),0);
-//        _mesh.InsertPointInMesh( v );
-//        updateGL(); //UpgradeQt6: update();
-//    }
 }
 
 // Mouse movement management
