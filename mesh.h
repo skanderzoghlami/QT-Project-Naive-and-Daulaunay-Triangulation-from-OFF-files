@@ -119,12 +119,12 @@ public:
     Mesh(){}
     void saveOFFFile(const vector<Vertex> &vertices, const vector<Face> &faces, const string &filename);
     void readOFFFile(const string &filename, std::vector<Vertex> &vertices, std::vector<Face> &faces );
-    void splitFace(int indiceFace , Vertex& new_vetex );
+    void splitFace(int indiceFace , Vertex& new_vetex , int l );
     void edgeFlip(int f1 , int f2);
     void edgeFlipV2(int f1, int f2);
     void edgeFlipv3( int fId1,  int fId2);
     int test_orientation(Vertex v1 , Vertex v2 , Vertex v3) ;
-    int pointInTriangle(Face &f, Vertex &P);
+    int pointInTriangle(Face &f, Vertex &P ,int& l);
     void InsertPointInMesh(Vertex& A ) ;
     void splitFaceV2(int indiceFace, Vertex &new_vetex);
     Vector3D getPhiVector(Vertex A , Vertex B );
@@ -144,7 +144,7 @@ public:
     vector<int> faceMask ;
     vector<int> VertexMask ;
 
-    bool isDaulaunay(Edge& a) ;
+    bool isDaulaunay(Edge& a , int& ind) ;
     int delaunizeV2() ;
     bool isFlippable(Edge edge);
     // Mr Iterator For Vertices

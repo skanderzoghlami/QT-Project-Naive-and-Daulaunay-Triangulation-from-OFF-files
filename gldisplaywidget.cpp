@@ -21,17 +21,17 @@ void GLDisplayWidget::initializeGL()
     glEnable(GL_LIGHT0);
     glEnable(GL_COLOR_MATERIAL);
 
-    //** TP : To add....
     std::vector<Vertex> vertices = {
-        Vertex(0.0f, 1.0f, 0.0f),
-        Vertex(-1.0f, -1.0f, 0.0f),
-        Vertex(1.0f, -1.0f, 0.0f)
+        Vertex(0.0f, 0.0f, 0.0f),
+        Vertex(2.0f, 0.0f, 0.0f),
+        Vertex(0.0f, 2.0f, 0.0f)
     };
-//    std::vector<Vertex> vertices = {
-//        Vertex(-1296.33 , -942.784 , 0.0),
-//        Vertex(-5862.13 ,  2288.89,  0.0),
-//        Vertex(3009.41 ,  -4990.08 ,  0)
-//    };
+    /*std::vector<Vertex> vertices = {
+        Vertex(-1296.33 , -942.784 , 0.0),
+        Vertex(-5862.13 ,  2288.89,  0.0),
+        Vertex(3009.41 ,  -4990.08 ,  0)
+    };
+    */
 
     std::vector<Face> faces = {
         Face(0, 1, 2) // Assuming Face is a class representing a triangle with vertex indices
@@ -105,7 +105,7 @@ void GLDisplayWidget::mouseMoveEvent(QMouseEvent *event)
 // Mouse Management for the zoom
 void GLDisplayWidget::wheelEvent(QWheelEvent *event) {
     QPoint numDegrees = event->angleDelta();
-    double stepZoom = 0.25;
+    double stepZoom = 0.5;
     if (!numDegrees.isNull())
     {
       _Z = (numDegrees.x() > 0 || numDegrees.y() > 0) ? _Z + stepZoom : _Z - stepZoom;

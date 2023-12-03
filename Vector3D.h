@@ -37,5 +37,8 @@ public:
     float magnitude() const {
         return std::sqrt(x * x + y * y + z * z);
     }
+    bool isZero() const {
+        return x == 0.0 && y == 0.0 && z == 0.0;
+    }
 };
 #endif // VECTOR3D_H

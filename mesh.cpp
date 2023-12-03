@@ -1,5 +1,25 @@
 #include "mesh.h"
 #include <ctime>
+#include <iostream >
+#include <vector>
+#include <fstream>
+#include <vector>
+#include <map>
+#include <string>
+#include <utility>
+#include "Mesh.h"
+#include "Vector3D.h"
+#include <set>
+#include <deque>
+
+using std::cout;
+using std::endl;
+using std::vector;
+using namespace std;
+
+
+
+
 GeometricWorld::GeometricWorld()
 {
     double width=0.5, depth=0.6, height=0.8;
@@ -61,22 +81,7 @@ void GeometricWorld::drawWireFrame() {
     glEnd();
 }
 
-#include <iostream >
-#include <vector>
-#include <fstream>
-#include <vector>
-#include <map>
-#include <string>
-#include <utility>
-#include "Mesh.h"
-#include "Vector3D.h"
-#include <set>
-#include <deque>
 
-using std::cout;
-using std::endl;
-using std::vector;
-using namespace std;
 // ------------------------------- Partie Creation de La structure de données ------------------
 // Mr. Not really interesting Constructor
 Mesh::Mesh(const std::vector<Vertex> &vertex_init, const std::vector<Face> &faces_init)
@@ -121,8 +126,18 @@ void Mesh::readOFFFile(const string &filename, std::vector<Vertex> &vertices, st
             vertices[face.v3].front_index = i;
             faces[i] = face;
             faceMask[i]=1 ;
-            std::map<std::pair<int, int>, std::pair<int, int>>::iterator iter = indexing_map.find({face.v1, face.v2});
-
+            //std::map<std::pair<int, int>, std::pair<int, int>>::iterator iter = indexing_map.find({face.v1, face.v2});
+            std::pair<int, int> keyToFind = {face.v1, face.v2};
+            std::map<std::pair<int, int>, std::pair<int, int>>::iterator iter;
+            for ( iter = indexing_map.begin(); iter != indexing_map.end(); ++iter) {
+                // Check if the key matches the one to find
+                if (iter->first == keyToFind) {
+                    // Check additional conditions if needed
+                    int otherFace = iter->second.first;
+                    if (otherFace!=i)
+                        break;
+                }
+            }
             if (iter != indexing_map.end())
             {
                 int otherFace = iter->second.first;
@@ -143,11 +158,22 @@ void Mesh::readOFFFile(const string &filename, std::vector<Vertex> &vertices, st
             }
             else
             {
-                indexing_map[{face.v1, face.v2}] = {i, 3}; // cette aréte appartient au face i et la sommet qu'il faut mettre est v3
+                indexing_map[{face.v1, face.v2}] = {i, 3};
                 indexing_map[{face.v2, face.v1}] = {i, 3};
             }
 
-            iter = indexing_map.find({face.v1, face.v3});
+            //iter = indexing_map.find({face.v1, face.v3});
+            keyToFind={face.v1,face.v3};
+            for ( iter = indexing_map.begin(); iter != indexing_map.end(); ++iter) {
+                // Check if the key matches the one to find
+
+                if (iter->first == keyToFind ) {
+                    // Check additional conditions if needed
+                    int otherFace = iter->second.first;
+                    if (otherFace!=i)
+                        break;
+                }
+            }
             if (iter != indexing_map.end())
             {
                 int otherFace = iter->second.first;
@@ -172,7 +198,18 @@ void Mesh::readOFFFile(const string &filename, std::vector<Vertex> &vertices, st
                 indexing_map[{face.v3, face.v1}] = {i, 2};
             }
 
-            iter = indexing_map.find({face.v2, face.v3});
+            //iter = indexing_map.find({face.v2, face.v3});
+            keyToFind={face.v2,face.v3};
+            for ( iter = indexing_map.begin(); iter != indexing_map.end(); ++iter) {
+                // Check if the key matches the one to find
+
+                if (iter->first == keyToFind ) {
+                    // Check additional conditions if needed
+                    int otherFace = iter->second.first;
+                    if (otherFace!=i)
+                        break;
+                }
+            }
             if (iter != indexing_map.end())
             {
                 int otherFace = iter->second.first;
@@ -243,18 +280,32 @@ void Mesh::saveOFFFile(const vector<Vertex> &vertices, const vector<Face> &faces
 
 // ----------------------------- Partie Insertion naive ------------------------
 // Aka: Split Triangle into two, when the vertex is on an edge
-void Mesh::splitFace(int indiceFace, Vertex &new_vetex)
+void Mesh::splitFace(int indiceFace, Vertex &new_vetex ,int l)
 {
     // Vertices Configuration
     new_vetex.front_index = indiceFace;
     this->vertices.push_back(new_vetex);
     this->VertexMask.push_back(1);
 
-    int new_v_place = vertices.size() - 1;
+    int v4 = vertices.size() - 1;
     Face &nf0 = this->faces[indiceFace];
     Face nf1;
-    nf1.v1 = nf0.v2, nf1.v2 = nf0.v3, nf1.v3 = new_v_place;
-    nf0.v3 =  new_v_place;
+    int v1 =nf0.v1 , v2=nf0.v2 , v3=nf0.v3 ;
+    switch (l){
+    case 1 :
+        nf1.v1 = v1, nf1.v2 = v4, nf1.v3 = v3;
+        nf0.v1 =  v4 , nf0.v2 =  v2 ,  nf0.v3 =  v3 ;
+        break ;
+    case 2:
+        nf1.v1 = v1, nf1.v2 = v2, nf1.v3 = v4;
+        nf0.v1 =  v1 , nf0.v2 =  v4 ,  nf0.v3 =  v3 ;
+        break;
+    case 3:
+        nf1.v1 = v1, nf1.v2 = v2, nf1.v3 = v4;
+        nf0.v1 =  v2 , nf0.v2 =  v3 ,  nf0.v3 =  v4 ;
+        break;
+    }
+
     this->faces.push_back(nf1);
     faceMask.push_back(0);
     faceMask[indiceFace] = 0;
@@ -263,8 +314,9 @@ void Mesh::splitFace(int indiceFace, Vertex &new_vetex)
     std::cout << "Finishing File Load and changing VerticeS/faces" << std::endl;
     std::cout << "------------------------------------------------" << std::endl;
     readOFFFile("temp.off", vertices, faces);
-
 }
+
+
 // SplitFace The face into 3 Parts
 void Mesh::splitFaceV2(int indiceFace, Vertex &new_vetex)
 {
@@ -516,7 +568,7 @@ int Mesh::test_orientation(Vertex v1, Vertex v2, Vertex v3)
                                                                     : 0;
 }
 // Checking if a point is Inside a Triangle
-int Mesh::pointInTriangle(Face &f, Vertex &P)
+int Mesh::pointInTriangle(Face &f, Vertex &P, int& l)
 {
     Vertex A = vertices[f.v1];
     Vertex B = vertices[f.v2];
@@ -525,15 +577,26 @@ int Mesh::pointInTriangle(Face &f, Vertex &P)
     int orientation2 = this->test_orientation(B, C, P);
     int orientation3 = this->test_orientation(C, A, P);
 
-    if (orientation1 == 0 || orientation2  == 0  || orientation3  == 0 )
+    if (orientation1 == 0 && ( (orientation2 > 0 && orientation3 > 0) ))
     {
-        return 0; // boundary
+        l=1; // In AB
+        return 0 ;
     }
-    else if ((orientation1 > 0 && orientation2 > 0 && orientation3 > 0) ||
-             (orientation1 < 0 && orientation2 < 0 && orientation3 < 0))
+    else if (orientation2 == 0 && ( (orientation1 > 0 && orientation3 > 0)))
+    {
+        l=2;// In BC
+        return 0 ;
+    }
+    else if (orientation3 == 0 && ( (orientation1 > 0 && orientation2 > 0) ))
+    {
+        l=3; // In CA
+        return 0 ;
+    }
+    else if (orientation1 > 0 && orientation2 > 0 && orientation3 > 0)
     {
         return 1; // Inside
     }
+
     else
     {
         return -1; // Outside
@@ -544,21 +607,23 @@ void Mesh::InsertPointInMesh(Vertex &A)
 {
     // Inside the convexHull
     int isInside = 0;
+    int isOnEdge = 0;
     std::vector<std::vector<int>> vectorOfVertices;
     std::cout << "Initiating: Checking if point is inside Convex hull" << std::endl;
     int i = 0;
-    while (i < faces.size() && isInside == 0)
+    while (i < faces.size() && isInside == 0 && isOnEdge <=  2)
     {
         Face face = faces[i];
-        int k = pointInTriangle(face, A) ;
+        int l ;
+        int k = pointInTriangle(face, A , l) ;
         if (k == 1)
         {
             isInside = 1;
             splitFaceV2(i, A);
             std::cout << "Found The Point inside Face: " << i << std::endl;
         }else if(k==0){
-            isInside = 1;
-            splitFace(i, A);
+            isOnEdge += 1;
+            splitFace(i, A , l);
             std::cout << "Found The Point in an edge: " << i << std::endl;
         }
         if (face.f1 == -1)
@@ -578,9 +643,15 @@ void Mesh::InsertPointInMesh(Vertex &A)
 
     if (isInside)
     {
-        return;
         std::cout << "Point is Inside Convex hull, Leaving" << std::endl;
         std::cout << "------------------------------------------------" << std::endl;
+        return;
+
+    }
+    if (isOnEdge>1){
+        std::cout << "Point is inside "<< isOnEdge << " Edges "<< std::endl;
+        std::cout << "------------------------------------------------" << std::endl;
+        return;
     }
 
     std::cout << "Point is outside Convex hull" << std::endl;
@@ -589,7 +660,7 @@ void Mesh::InsertPointInMesh(Vertex &A)
     VertexMask.push_back(1);
     for (const std::vector<int> &verticesPair : vectorOfVertices)
     {
-        if ( test_orientation(vertices[verticesPair[0]], vertices[verticesPair[1]], A) < 0)
+        if ( test_orientation(vertices[verticesPair[0]], vertices[verticesPair[1]], A) <= 0)
         {
             Face newFace;
             newFace.v1 = verticesPair[0];
@@ -686,11 +757,11 @@ std::deque<Edge> Mesh::getEdges()
     return edges;
 }
 // This function checks if the mesh is daulaunay, if it isnt it returns the edge that is not daulaunay
-bool Mesh::isDaulaunay(Edge& a){
+bool Mesh::isDaulaunay(Edge& a , int& ind){
     // We iterate through all faces and check each edge
     // print faces size
     std::cout<<"Number of Faces: "<<faces.size()<<std::endl;
-    for (int i = 0; i < faces.size(); ++i)
+    for (int i = ind; i < faces.size(); ++i)
     {
 
         std::cout<<"Still Looking we at Face: "<<i<<std::endl;
@@ -734,6 +805,7 @@ bool Mesh::isDaulaunay(Edge& a){
                     std::cout<<"Edge is not locally daulaunay "<<isLocallyDaulaunay(edge)<<std::endl;
                     //if(isFlippable(edge)){
                     a = edge;
+                    ind = i;
                     return false;
                     //}
                 }
@@ -759,15 +831,37 @@ bool Mesh::isFlippable(Edge edge){
 int Mesh::lawson() {
     Edge a;
     int cnt = 0;
-    std::cout<<"Started Lawson"<<std::endl;
-    while(!isDaulaunay(a)){
-        std::cout<<"Flipping Edge: "<<a.A<<" "<<a.B<<" "<<a.C<<" "<<a.D<<" "<<a.f1<<" "<<a.f2<<std::endl;
-        edgeFlip(a.f1, a.f2);
-        cnt+=1 ;
+    std::cout << "Started Lawson" << std::endl;
+    int ind = 0;
+
+    int outerLoopCounter = 0;  // Counter for the outer loop
+
+    while (!isDaulaunay(a, ind)) {
+        int start = ind;
+        ind = 0;
+
+        int innerLoopCounter = 0;  // Counter for the inner loop
+
+        while (!isDaulaunay(a, start) && innerLoopCounter < 3) {
+            std::cout << "Flipping Edge: " << a.A << " " << a.B << " " << a.C << " " << a.D << " " << a.f1 << " " << a.f2 << std::endl;
+            edgeFlipv3(a.f1, a.f2);
+            cnt += 1;
+            innerLoopCounter += 1;
+        }
+
+        if (innerLoopCounter >= 3) {
+            // Break out of the outer loop if we iterate three times in the inner loop
+            std::cout << "Exiting Lawson due to too many iterations in the inner loop" << std::endl;
+            break;
+        }
+
+        outerLoopCounter += 1;
     }
-    std::cout<<"Finished Lawson after "<< cnt <<"iterations"<<std::endl;
+
+    std::cout << "Finished Lawson after " << cnt << " iterations" << std::endl;
     return cnt;
 }
+
 
 
 void Mesh::drawWireFrame() const
@@ -796,8 +890,8 @@ void Mesh::drawWireFrame() const
 
 void Mesh::edgeFlipv3( int fId1,  int fId2)
 {
-    auto &f1 = faces[fId1];
-    auto &f2 = faces[fId2];
+    Face  &f1 = faces[fId1];
+    Face  &f2 = faces[fId2];
     int s1 = f1.getOpposite(fId2);
     int s2 = f2.getOpposite(fId1);
 
@@ -817,6 +911,8 @@ void Mesh::edgeFlipv3( int fId1,  int fId2)
     // flip edge
     f1.v1v2v3[s1n] = f2.v1v2v3[s2];
     f2.v1v2v3[s2n] = f1.v1v2v3[s1];
+    f1.fillScalars();
+    f2.fillScalars();
     // update opposite in opposite face
     int sb = faces[f1.f1f2f3[s1]].getOpposite(fId2); // b
     int sc = faces[f2.f1f2f3[s2]].getOpposite(fId1); // c
