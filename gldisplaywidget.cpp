@@ -26,12 +26,12 @@ void GLDisplayWidget::initializeGL()
         Vertex(2.0f, 0.0f, 0.0f),
         Vertex(0.0f, 2.0f, 0.0f)
     };
-    /*std::vector<Vertex> vertices = {
-        Vertex(-1296.33 , -942.784 , 0.0),
-        Vertex(-5862.13 ,  2288.89,  0.0),
-        Vertex(3009.41 ,  -4990.08 ,  0)
-    };
-    */
+//    std::vector<Vertex> vertices = {
+//        Vertex(-1296.33 , -942.784 , 0.0),
+//        Vertex(-5862.13 ,  2288.89,  0.0),
+//        Vertex(3009.41 ,  -4990.08 ,  0)
+//    };
+
 
     std::vector<Face> faces = {
         Face(0, 1, 2) // Assuming Face is a class representing a triangle with vertex indices

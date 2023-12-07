@@ -119,7 +119,7 @@ void Mesh::readOFFFile(const string &filename, std::vector<Vertex> &vertices, st
         int numVerticesInFace;
 
         file >> numVerticesInFace >> face.v1 >> face.v2 >> face.v3;
-        if (!faceMask[i])
+        if ( true )// !faceMask[i])
         {
             vertices[face.v1].front_index = i;
             vertices[face.v2].front_index = i;
@@ -628,15 +628,15 @@ void Mesh::InsertPointInMesh(Vertex &A)
         }
         if (face.f1 == -1)
         {
-            vectorOfVertices.push_back({face.v2, face.v3,i});
+            vectorOfVertices.push_back({face.v2, face.v3,i,1});
         }
         if (face.f2 == -1)
         {
-            vectorOfVertices.push_back({face.v3, face.v1,i});
+            vectorOfVertices.push_back({face.v3, face.v1,i,2});
         }
         if (face.f3 == -1)
         {
-            vectorOfVertices.push_back({face.v1, face.v2,i});
+            vectorOfVertices.push_back({face.v1, face.v2,i,3});
         }
         i++;
     }
@@ -648,7 +648,7 @@ void Mesh::InsertPointInMesh(Vertex &A)
         return;
 
     }
-    if (isOnEdge>1){
+    if (isOnEdge>=1){
         std::cout << "Point is inside "<< isOnEdge << " Edges "<< std::endl;
         std::cout << "------------------------------------------------" << std::endl;
         return;
@@ -660,7 +660,20 @@ void Mesh::InsertPointInMesh(Vertex &A)
     VertexMask.push_back(1);
     for (const std::vector<int> &verticesPair : vectorOfVertices)
     {
-        if ( test_orientation(vertices[verticesPair[0]], vertices[verticesPair[1]], A) <= 0)
+        int p;
+        switch(verticesPair[3]){
+           case 1: //BC
+            p= test_orientation( vertices[verticesPair[0]], vertices[verticesPair[1]] ,A)  ;
+         break;
+           case 2: //CA
+         p= test_orientation(vertices[verticesPair[0]], vertices[verticesPair[1]] ,A)  ;
+
+        break;
+           case 3: // AB
+        p= test_orientation(vertices[verticesPair[0]], vertices[verticesPair[1]],A)  ;
+        break;
+           }
+        if ( p<0)
         {
             Face newFace;
             newFace.v1 = verticesPair[0];
@@ -840,21 +853,10 @@ int Mesh::lawson() {
         int start = ind;
         ind = 0;
 
-        int innerLoopCounter = 0;  // Counter for the inner loop
-
-        while (!isDaulaunay(a, start) && innerLoopCounter < 3) {
+        while (!isDaulaunay(a, start)) {
             std::cout << "Flipping Edge: " << a.A << " " << a.B << " " << a.C << " " << a.D << " " << a.f1 << " " << a.f2 << std::endl;
-            edgeFlipv3(a.f1, a.f2);
-            cnt += 1;
-            innerLoopCounter += 1;
-        }
-
-        if (innerLoopCounter >= 3) {
-            // Break out of the outer loop if we iterate three times in the inner loop
-            std::cout << "Exiting Lawson due to too many iterations in the inner loop" << std::endl;
-            break;
-        }
-
+            edgeFlipV2(a.f1, a.f2);
+            cnt += 1;        }
         outerLoopCounter += 1;
     }
 

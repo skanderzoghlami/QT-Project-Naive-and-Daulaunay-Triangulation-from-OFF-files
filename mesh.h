@@ -132,7 +132,7 @@ public:
     std::deque<Edge> getEdges();
     int lawson();
     void drawWireFrame() const;
-
+    void clearMap(int old_v1 , int old_v2 , int old_v3 , int incidentFace , int neighbour);
 
     void addFaces(const std::vector<int>& affectedFaces, const std::vector<int>& newFaces);
     void connectFaces(int faceIndex, int v1, int v2, std::map<std::pair<int, int>, std::pair<int, int>>& indexing_map);
